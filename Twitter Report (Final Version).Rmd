@@ -1,0 +1,284 @@
+---
+title: "Twitter"
+author: "Siran Zhao"
+date: "December 14, 2017"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE, warning=FALSE, error=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(plotly)
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(RColorBrewer)
+library(syuzhet)
+library(plyr)
+library(grid)
+library(gridExtra)
+library(devtools)
+library(twitteR)
+library(streamR)
+library(leaflet)
+```
+# Twitter Exploring For Apple's New Products
+
+## 1.Setting up Twitter Account
+```{r}
+
+api_key <- 	"RNE52oQ8o8Vxh1PIv8r6a9AOU"
+api_secret <- "y4K7nX3GXehZolV3ZDrZ2VchsU963NsV4dn8LoMMiwqGulv77K"
+access_token <- "927637056414797827-sTv9jN19GWPmobNaSv2JaUXpI6Z7DFI"
+access_token_secret <- "vY5koc81VpyCVsGWeoXeUGnswCa1ya4EohYyQkWtzX6vy"
+
+
+setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
+
+```
+
+
+## 2.Saving up iphoneX data from Twitter.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+#iphonex <- searchTwitter("iphonex",since = '2017-08-02',until = '2017-12-15',lang = "en",n = 10000)
+
+#iph <- twListToDF(iphonex)
+#saveRDS(iph,file = "Iphonex.rds")
+
+
+```
+
+## 3.Reloading data from saved rds profile.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+iph <- readRDS("Iphonex.rds")
+#iph.filted.geo <- filter(iph,!is.na(iph$longitude))
+iph <- separate(iph,created,c("Date","Time")," ")
+
+
+```
+
+
+## 4.Cleaning text data and transform into corpus, then produce the wordclouds for IphoneX.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+#Transforming data from dataframe to corpus.
+iphcorpus <- Corpus(VectorSource(str_replace_all(iph$text, "@", "")))
+#Clearing useless data, Puntuation, words and so on.
+iphcorpus <- tm_map(iphcorpus,removePunctuation)
+iphcorpus <- tm_map(iphcorpus, content_transformer(tolower))
+iphcorpus <- tm_map(iphcorpus, removeWords, stopwords("english"))
+iphcorpus <- tm_map(iphcorpus,removeWords,c("apple","iphonex"))
+iphcorpus <- tm_map(iphcorpus,removeWords,c("will","now","happening"))
+iphcorpus <- tm_map(iphcorpus,removeWords,c("giveaway","ever","holiday","1000"))
+iphcorpus <- tm_map(iphcorpus, stripWhitespace)
+set.seed(1000)
+wordcloud(iphcorpus,max.words = 100,random.order = FALSE)
+
+```
+
+#### -From the word cloud above, we can find that appeared most frequently is "winners", " choice", "glam life guru" and "biggest". I think they mean Iphone X is a perfect new product for customers.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+#iphone8 <- searchTwitter("iphone8",since = '2017-07-02',until = '2017-12-15',lang = "en",n = 10000)
+
+#iph8 <- twListToDF(iphone8)
+#saveRDS(iph8,file = "Iphone8.rds")
+```
+
+
+## 5.Cleaning text data and transform into corpus, then produce the wordclouds for Iphone8.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+iph8 <- readRDS("Iphone8.rds")
+#Transforming data from dataframe to corpus.
+iph8corpus <- Corpus(VectorSource(str_replace_all(iph8$text, "@", "")))
+#Clearing useless data, Puntuation, words and so on.
+iph8corpus <- tm_map(iph8corpus,removePunctuation)
+iph8corpus <- tm_map(iph8corpus, content_transformer(tolower))
+iph8corpus <- tm_map(iph8corpus, removeWords, stopwords("english"))
+iph8corpus <- tm_map(iph8corpus,removeWords,c("apple","iphone8","iphone7","iphone8andx","iphone","iphone8plus","iphone8officiai","iphonex"))
+iph8corpus <- tm_map(iph8corpus,removeWords,c("will","now","happening"))
+iph8corpus <- tm_map(iph8corpus,removeWords,c("available","message","reverskinegh","smartphone","ampamp","day","1000","gssrinivasrao"))
+iph8corpus <- tm_map(iph8corpus,removeWords,c("giveaway","ampamp","amp","day","1000","endofyeargiveaway","iphonegiveaway","shiptokenya","retweet"))
+
+#Produce word cloud for iphone8
+iph8corpus <- tm_map(iph8corpus, stripWhitespace)
+set.seed(1000)
+wordcloud(iph8corpus,max.words = 100,random.order = FALSE)
+
+```
+
+#### -From the word cloud for iphone 8 above, we can find "follow", "prize", "win". I think these two words mean people would like to buy it. The word "256 gb" may be means that iphone 8 which are 256gb is better than others with other storage. \par
+
+## 6.Cleaning text data and transform into corpus, then produce the wordclouds for Iphone8 & Ipohone X.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+#iphone8.vs.iphonex <- searchTwitter("iphone8 iphonex",since = '2017-07-02',until = '2017-12-15',lang = "en",n = 10000)
+
+#iphone8.vs.iphonex <- twListToDF(iphone8.vs.iphonex)
+#saveRDS(iphone8.vs.iphonex,file = "iphone8_vs_iphonex.rds")
+iph8x <- readRDS("iphone8_vs_iphonex.rds")
+#Transforming data from dataframe to corpus.
+iph8xcorpus <- Corpus(VectorSource(str_replace_all(iph8x$text, "@", "")))
+#Clearing useless data, Puntuation, words and so on.
+iph8xcorpus <- tm_map(iph8xcorpus,removePunctuation)
+iph8xcorpus <- tm_map(iph8xcorpus, content_transformer(tolower))
+iph8xcorpus <- tm_map(iph8xcorpus, removeWords, stopwords("english"))
+iph8xcorpus <- tm_map(iph8xcorpus,removeWords,c("apple","iphonex","iphone8","https","phone"))
+iph8xcorpus <- tm_map(iph8xcorpus,removeWords,c("will","now","happening"))
+iph8xcorpus <- tm_map(iph8xcorpus,removeWords,c("giveaway","ever","holiday","retweet","one","ampamp","iphone"))
+iph8xcorpus <- tm_map(iph8xcorpus, stripWhitespace)
+set.seed(1000)
+wordcloud(iph8xcorpus,max.words = 100,random.order = FALSE)
+
+```
+
+#### -The word cloud of "Iphone 8 and iphone x", though we can see there are "follow", "win", "just" and other words in it, we can't make any conclusion of it. Because from the word cloud we can't see any emotional bias between Iphone 8 and Iphone X. So if we want to do further analyze, we need to make a sentimental analysis, which can help us to learn more about the sentimental bias among people who send these twitters.\par
+
+## 7.Setting up functions for sentimental analysis.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+pos.words <- read.csv("pve.csv")
+neg.words <- read.csv("nve.csv")
+
+pos.words <- scan("pve.csv",what = 'character')
+neg.words <- scan("nve.csv",what = 'character')
+
+pos.words = c(pos.words, 'new','nice' ,'good', 'horizon')
+neg.words = c(neg.words, 'wtf', 'behind','feels', 'ugly', 'back','worse' , 'shitty', 'bad', 'no','freaking','sucks','horrible')
+
+score.sentiment = function(sentences, pos.words, neg.words, .progress='none')
+{
+ require(plyr)
+ require(stringr)
+ 
+ # we got a vector of sentences. plyr will handle a list
+ # or a vector as an “l” for us
+ # we want a simple array (“a”) of scores back, so we use 
+ # “l” + “a” + “ply” = “laply”:
+ 
+scores = laply(sentences, function(sentence, pos.words, neg.words) {
+ 
+ # clean up sentences with R’s regex-driven global substitute, gsub():
+ sentence = gsub('[[:punct:]]', '', sentence)
+ sentence = gsub('[[:cntrl:]]', '', sentence)
+ sentence = gsub('\\d+', '', sentence)
+ # and convert to lower case:
+ sentence = tolower(sentence)
+ 
+ # split into words. str_split is in the stringr package
+ word.list = str_split(sentence, '\\s+')
+ # sometimes a list() is one level of hierarchy too much
+ words = unlist(word.list)
+ 
+ # compare our words to the dictionaries of positive & negative terms
+ pos.matches = match(words, pos.words)
+ neg.matches = match(words, neg.words)
+ 
+ # match() returns the position of the matched term or NA
+ # we just want a TRUE/FALSE:
+ pos.matches = !is.na(pos.matches)
+ neg.matches = !is.na(neg.matches)
+ 
+ # and conveniently enough, TRUE/FALSE will be treated as 1/0 by sum():
+ score = sum(pos.matches) - sum(neg.matches)
+ 
+ return(score)
+ }, pos.words, neg.words, .progress=.progress )
+ 
+ scores.df = data.frame(score=scores, text=sentences)
+ return(scores.df)
+}
+
+test1 <- ldply(iph,function(x) {as.data.frame(x)} )
+test1 <- str_replace_all(test1$x, "@", "")
+test1 <- ldply(test1,function(x) {as.data.frame(x)} )
+result.iphx.1 <- score.sentiment(test1$x,pos.words,neg.words)
+
+#saveRDS(result.iphx.1,"iphx_result1.rds")
+
+#Plotting results through Barplot to see the numbers of each point for iphone x dataset.
+plot1.1 <- ggplot(result.iphx.1,aes(result.iphx.1$score))+geom_bar()+labs(x = "Sentiment Score")
+
+result.iphx.2 <- filter(result.iphx.1,score != "0")
+
+#saveRDS(result.iphx.2,"iphx_result2.rds")
+
+plot1.2 <- ggplot(result.iphx.2,aes(result.iphx.2$score))+geom_bar()+labs(x = "Sentiment Score")
+
+grid.arrange(plot1.1,plot1.2,ncol = 2)
+
+
+```
+
+#### -The barplot I showed above, on the left side is the plot for all scores after grading by positive words and negative words. On the right side, I remove the zero scores which present neutral attitude, and plot the positive and negative bias. From the plot we can find that most of the people's twittwer are neutral. Then I remove the zero scores, I find most of the attitude are positive with most of the scores are 1 point. So I think that most of people have positive attitude towards Iphone X.
+
+## 8.Plotting results through Barplot to see the numbers of each point for iphone 8 dataset.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+#Plotting results through Barplot to see the numbers of each point for iphone 8 dataset.
+
+test2 <- ldply(iph8,function(x) {as.data.frame(x)} )
+test2 <- str_replace_all(test2$x, "@", "")
+test2 <- ldply(test2,function(x) {as.data.frame(x)} )
+result.iph8.1 <- score.sentiment(test2$x,pos.words,neg.words)
+
+#saveRDS(result.iph8.1,"iph8_result1.rds")
+
+plot2.1 <- ggplot(result.iph8.1,aes(result.iph8.1$score))+geom_bar()+labs(x = "Sentiment Score")
+
+result.iph8.2 <- filter(result.iph8.1,score != "0")
+
+#saveRDS(result.iph8.2,"iph8_result2.rds")
+
+plot2.2 <- ggplot(result.iph8.2,aes(result.iph8.2$score))+geom_bar()+labs(x = "Sentiment Score")
+
+grid.arrange(plot2.1,plot2.2,ncol = 2)
+```
+
+#### -Like graph of Iphone 8, most of people had neutral attitude of their twitters, however, when I removed the zero scores, most of people have positive attitude towards iphone 8. So I try to compare Iphone X and Iphone 8 by looking at the ratio among each scores.
+
+## 9.Ratio of sentiment scores for IphoneX and Iphone8 without 0 scores.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+result.iphx.1$pos <- 
+  ifelse(result.iphx.1$score < 0,"Negative",
+         ifelse(result.iphx.1$score == 0,"Neutral","Positive"))
+result.iphx.1$belong <- rep("iphonex",170000)
+
+result.iph8.1$pos <- 
+  ifelse(result.iph8.1$score < 0,"Negative",
+         ifelse(result.iph8.1$score == 0,"Neutral","Positive"))
+result.iph8.1$belong <- rep("iphone8",98608)
+
+result.compare <- rbind(result.iphx.1,result.iph8.1)
+result.compare <- filter(result.compare,pos != "Neutral")
+
+ggplot(result.compare,aes(x= belong,fill=pos))+geom_bar(position = "fill")
+```
+
+
+#### -From the ratio of scores, I can find slightly difference between Iphone 8 and Iphone X , we can nearly naglect it. So I think most of people's attitude are positive for both of them.
+
+
+## 10.Mapping for geolocation of twitter with location data.
+```{r warning=FALSE, error=FALSE, message=FALSE}
+iphx.geo <-dplyr::filter(iph,!is.na(iph$longitude) & !is.na(iph$latitude))
+iphx.geo$belong <- rep("iphx",69)
+iph8.geo <- dplyr::filter(iph8, !is.na(iph8$longitude) & !is.na(iph8$latitude))
+iph8.geo <- tidyr::separate(iph8.geo,"created",c("Date","Time")," ")
+iph8.geo$belong <- rep("iph8",39)
+geo <- rbind(iphx.geo,iph8.geo)
+geo$longitude <- as.numeric(geo$longitude)
+geo$latitude <- as.numeric(geo$latitude)
+
+pal <- colorFactor(c("navy", "red"), domain = c("iphx", "iph8"))
+leaflet(data = geo)%>%
+  addTiles()%>%
+  addCircleMarkers(~geo$longitude,~geo$latitude, color = ~pal(geo$belong))
+  
+
+```
+
+## 11.Conlusion
+
+#### -I mapped out all the location I got from the twitter.In the map, the points in Navy Blue are location of twitter for Iphone X, and the poins in red are for Iphone 8, we can find most of plots are in the USA and Europe, which means most of the user of twitter who comment on Apple new products are located in this two places.
