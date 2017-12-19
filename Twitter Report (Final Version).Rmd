@@ -30,6 +30,10 @@ library(leaflet)
 ```
 # Twitter Exploring For Apple's New Products
 
+## Introduction
+
+#### In this analyze work, I explored the data from twitter, which are about Apple's new products: Iphone X and Iphone 8. And I try to compare the difference of people's attitude between these two products with their social media data and find out are there any patents of the locations who sent those twitters.
+
 ## 1.Setting up Twitter Account
 ```{r}
 
@@ -81,7 +85,7 @@ wordcloud(iphcorpus,max.words = 100,random.order = FALSE)
 
 ```
 
-#### -From the word cloud above, we can find that appeared most frequently is "winners", " choice", "glam life guru" and "biggest". I think they mean Iphone X is a perfect new product for customers.
+#### - From the word cloud above, we can find that appeared most frequently is "winners", " choice", "glam life guru" and "biggest". I think they mean Iphone X is a perfect new product for customers.
 ```{r warning=FALSE, error=FALSE, message=FALSE}
 #iphone8 <- searchTwitter("iphone8",since = '2017-07-02',until = '2017-12-15',lang = "en",n = 10000)
 
@@ -111,7 +115,7 @@ wordcloud(iph8corpus,max.words = 100,random.order = FALSE)
 
 ```
 
-#### -From the word cloud for iphone 8 above, we can find "follow", "prize", "win". I think these two words mean people would like to buy it. The word "256 gb" may be means that iphone 8 which are 256gb is better than others with other storage. \par
+#### - From the word cloud for iphone 8 above, we can find "follow", "prize", "win". I think these two words mean people would like to buy it. The word "256 gb" may be means that iphone 8 which are 256gb is better than others with other storage. \par
 
 ## 6.Cleaning text data and transform into corpus, then produce the wordclouds for Iphone8 & Ipohone X.
 ```{r warning=FALSE, error=FALSE, message=FALSE}
@@ -135,7 +139,7 @@ wordcloud(iph8xcorpus,max.words = 100,random.order = FALSE)
 
 ```
 
-#### -The word cloud of "Iphone 8 and iphone x", though we can see there are "follow", "win", "just" and other words in it, we can't make any conclusion of it. Because from the word cloud we can't see any emotional bias between Iphone 8 and Iphone X. So if we want to do further analyze, we need to make a sentimental analysis, which can help us to learn more about the sentimental bias among people who send these twitters.\par
+#### - The word cloud of "Iphone 8 and iphone x", though we can see there are "follow", "win", "just" and other words in it, we can't make any conclusion of it. Because from the word cloud we can't see any emotional bias between Iphone 8 and Iphone X. So if we want to do further analyze, we need to make a sentimental analysis, which can help us to learn more about the sentimental bias among people who send these twitters.\par
 
 ## 7.Setting up functions for sentimental analysis.
 ```{r warning=FALSE, error=FALSE, message=FALSE}
@@ -212,7 +216,7 @@ grid.arrange(plot1.1,plot1.2,ncol = 2)
 
 ```
 
-#### -The barplot I showed above, on the left side is the plot for all scores after grading by positive words and negative words. On the right side, I remove the zero scores which present neutral attitude, and plot the positive and negative bias. From the plot we can find that most of the people's twittwer are neutral. Then I remove the zero scores, I find most of the attitude are positive with most of the scores are 1 point. So I think that most of people have positive attitude towards Iphone X.
+#### - The barplot I showed above, on the left side is the plot for all scores after grading by positive words and negative words. On the right side, I remove the zero scores which present neutral attitude, and plot the positive and negative bias. From the plot we can find that most of the people's twittwer are neutral. Then I remove the zero scores, I find most of the attitude are positive with most of the scores are 1 point. So I think that most of people have positive attitude towards Iphone X.
 
 ## 8.Plotting results through Barplot to see the numbers of each point for iphone 8 dataset.
 ```{r warning=FALSE, error=FALSE, message=FALSE}
@@ -236,7 +240,7 @@ plot2.2 <- ggplot(result.iph8.2,aes(result.iph8.2$score))+geom_bar()+labs(x = "S
 grid.arrange(plot2.1,plot2.2,ncol = 2)
 ```
 
-#### -Like graph of Iphone 8, most of people had neutral attitude of their twitters, however, when I removed the zero scores, most of people have positive attitude towards iphone 8. So I try to compare Iphone X and Iphone 8 by looking at the ratio among each scores.
+#### - Like graph of Iphone 8, most of people had neutral attitude of their twitters, however, when I removed the zero scores, most of people have positive attitude towards iphone 8. So I try to compare Iphone X and Iphone 8 by looking at the ratio among each scores.
 
 ## 9.Ratio of sentiment scores for IphoneX and Iphone8 without 0 scores.
 ```{r warning=FALSE, error=FALSE, message=FALSE}
@@ -257,7 +261,7 @@ ggplot(result.compare,aes(x= belong,fill=pos))+geom_bar(position = "fill")
 ```
 
 
-#### -From the ratio of scores, I can find slightly difference between Iphone 8 and Iphone X , we can nearly naglect it. So I think most of people's attitude are positive for both of them.
+#### - From the ratio of scores, I can find slightly difference between Iphone 8 and Iphone X , we can nearly naglect it. So I think most of people's attitude are positive for both of them.
 
 
 ## 10.Mapping for geolocation of twitter with location data.
@@ -279,6 +283,10 @@ leaflet(data = geo)%>%
 
 ```
 
-## 11.Conlusion
+## 11. Analysis of locations:
 
-#### -I mapped out all the location I got from the twitter.In the map, the points in Navy Blue are location of twitter for Iphone X, and the poins in red are for Iphone 8, we can find most of plots are in the USA and Europe, which means most of the user of twitter who comment on Apple new products are located in this two places.
+#### - I mapped out all the location I got from the twitter.In the map, the points in Navy Blue are location of twitter for Iphone X, and the poins in red are for Iphone 8, we can find most of plots are in the USA and Europe, which means most of the user of twitter who comment on Apple new products are located in this two places.
+
+## 12. Conclusion:
+
+#### - From the Bar plot, I can find slightly difference of attitude between Iphone X and Iphone 8, and the highese bar shows that most of people who sent their twitter about these two products showed positive attitude toward both of them. So I think apple's new products are approved by people, and will sell good in the USA and Europe.
